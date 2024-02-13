@@ -1,0 +1,22 @@
+{
+  "name": "rinha-de-backend-2024",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+	  "start": "node main.js",
+    "test": "mocha tests/ --watch --timeout 5000"
+  },
+  "keywords": [],
+  "author": "Pedro Azevedo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "chai": "^4.3.8",
+    "chai-http": "^4.4.0",
+    "mocha": "^10.2.0"
+  }
+}
