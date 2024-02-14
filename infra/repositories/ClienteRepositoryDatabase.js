@@ -5,9 +5,9 @@ class ClienteRepositoryDatabase {
 		this.connection = connection;
 	}
 
-	async findById (id) {
+	async findById (id, isTransaction = true) {
 		const result = await this.connection.query(
-			`select * from clientes where id = $1 limit 1`, [id]
+			`select * from clientes where id = $1 limit 1 ${isTransaction ? 'FOR UPDATE': ''}`, [id]
 		);
 
 		return result.rows[0];

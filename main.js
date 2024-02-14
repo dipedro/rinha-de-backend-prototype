@@ -13,14 +13,17 @@ const connection = new Pg();
 
 app.post('/clientes/:id/transacoes', async (req, res) => {
 	const { valor, tipo, descricao } = req.body;
+	const clienteId = req.params.id;
 	const conexao = await connection.connect();
 	try {
-
+		await conexao.query('BEGIN');
+		await conexao.query(`SELECT pg_advisory_xact_lock(${clienteId})`)
 		const clienteRepository = new ClienteRepositoryDatabase(conexao);
 
-		const clienteDb = await clienteRepository.findById(req.params.id);
+		const clienteDb = await clienteRepository.findById(clienteId);
 
 		if (!clienteDb) {
+			await conexao.query('ROLLBACK');
 			return res.status(404).send({ message: 'Cliente não encontrado!' });
 		}
 
@@ -29,6 +32,7 @@ app.post('/clientes/:id/transacoes', async (req, res) => {
 		const cliente = new Cliente(clienteDb.id, clienteDb.nome, clienteDb.limite, clienteDb.saldo);
 		
 		if (tipo === 'd' && (cliente.getSaldo() - valor) < -cliente.getLimite()) {
+			await conexao.query('ROLLBACK');
 			return res.status(422).json({ message: 'Limite não disponível!' });
 		}
 
@@ -40,12 +44,15 @@ app.post('/clientes/:id/transacoes', async (req, res) => {
 			transacaoRepository.save(transacao, cliente.getId()),
 			clienteRepository.atualizarSaldo(cliente)
 		]);
+
+		await conexao.query('COMMIT');
 	
 		res.status(200).send({
 			limite: cliente?.getLimite() || 0,
 			saldo: cliente?.getSaldo() || 0
 		});
 	} catch (error) {
+		await conexao.query('ROLLBACK');
 		res.status(422).json({ message: error.message});
 	} finally {
 		conexao.release();
@@ -58,13 +65,13 @@ app.get('/clientes/:id/extrato', async (req, res) => {
 	try {
 		const clienteRepository = new ClienteRepositoryDatabase(conexao);
 
-		const cliente = await clienteRepository.findById(clienteId);
+		const cliente = await clienteRepository.findById(clienteId, false);
 
 		if (!cliente) {
 			return res.status(404).send({ message: 'Cliente não encontrado!'});
 		}
 
-		const extrato = await clienteRepository.extrato(clienteId)
+		const extrato = await clienteRepository.extrato(clienteId);
 	
 		res.status(200).send({
 			saldo: {
