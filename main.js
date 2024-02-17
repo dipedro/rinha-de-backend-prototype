@@ -3,7 +3,7 @@ const Transacao = require('./domain/Transaction');
 const Cliente = require('./domain/Cliente');
 const ClienteRepositoryDatabase = require('./infra/repositories/ClienteRepositoryDatabase');
 const TransacaoRepositoryDatabase = require('./infra/repositories/TransacaoRepositoryDatabase');
-const Pg = require('./infra/databases/pg');
+const Pg = require('./infra/databases/Pg');
 const app = express();
 const port = 3000;
 
@@ -17,7 +17,7 @@ app.post('/clientes/:id/transacoes', async (req, res) => {
 	const conexao = await connection.connect();
 	try {
 		await conexao.query('BEGIN');
-		await conexao.query(`SELECT pg_advisory_xact_lock(${clienteId})`)
+		//await conexao.query(`SELECT pg_advisory_xact_lock(${clienteId})`)
 		const clienteRepository = new ClienteRepositoryDatabase(conexao);
 
 		const clienteDb = await clienteRepository.findById(clienteId);

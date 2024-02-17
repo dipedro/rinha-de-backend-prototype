@@ -10,8 +10,8 @@ class Pg {
 			database: 'rinhadb',
 			password: 'postgres',
 			port: 5432,
-			//max: 10, // maximum number of clients the pool should contain
-			idleTimeoutMillis: 1, // how long a client is allowed to remain idle before being closed
+			max: 15, // maximum number of clients the pool should contain
+			//idleTimeoutMillis: 1, // how long a client is allowed to remain idle before being closed
   			//connectionTimeoutMillis: 2000, // how long to wait in milliseconds while trying to connect to the database before timing out
 		});
 	}

@@ -6,18 +6,16 @@ services:
     working_dir: /app
     volumes:
       - ./:/app
-    command: bash -c "npm start"
+    command: bash -c "npm install && npm start"
     depends_on:
       - db
     expose:
       - "3000"
-    ports:
-      - 3000:3000
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: '175MB'
+          cpus: '0.4'
+          memory: '150MB'
 
   api2: # API - Instância 02
     image: node:lts-slim
@@ -25,18 +23,16 @@ services:
     working_dir: /app
     volumes:
       - ./:/app
-    command: bash -c "npm start"
+    command: bash -c "npm install && npm start"
     depends_on:
       - db
     expose:
       - "3000"
-    ports:
-      - 3001:3001
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: '175MB'
+          cpus: '0.4'
+          memory: '150MB'
 
   nginx: # Load Balancer
     image: nginx:latest
@@ -55,7 +51,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.2'
+          cpus: '0.1'
           memory: '100MB'
   db: # Banco de dados
    image: postgres:14.1-alpine
@@ -67,12 +63,12 @@ services:
     POSTGRES_DB: rinhadb
    volumes:
       - ./ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
-   command: postgres -c 'max_connections=300'
+   command: postgres -c 'max_connections=35'
    deploy:
       resources:
         limits:
-          cpus: '0.3'
-          memory: '100MB'
+          cpus: '0.6'
+          memory: '150MB'
 
 networks:
   default:

@@ -1,11 +1,11 @@
-CREATE TABLE IF NOT EXISTS public.clientes (
+CREATE unlogged TABLE IF NOT EXISTS public.clientes (
 	id SERIAL PRIMARY KEY,
 	nome VARCHAR(50),
 	limite INTEGER NOT NULL DEFAULT 0,
 	saldo INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS public.transacoes (
+CREATE unlogged TABLE IF NOT EXISTS public.transacoes (
 	id SERIAL PRIMARY KEY,
 	valor INTEGER NOT NULL,
 	tipo CHAR(1) NOT NULL,
@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS public.transacoes (
 	cliente_id INTEGER NOT NULL,
 	FOREIGN KEY (cliente_id) REFERENCES clientes (id)
 );
+
+create index ix_transacao_cliente_data on transacoes(cliente_id, realizada_em desc);
 
 DO $$
 BEGIN
