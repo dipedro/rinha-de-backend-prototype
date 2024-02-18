@@ -1,17 +1,18 @@
-const express = require('express');
+// const express = require('express');
 const Transacao = require('./domain/Transaction');
 const Cliente = require('./domain/Cliente');
 const ClienteRepositoryDatabase = require('./infra/repositories/ClienteRepositoryDatabase');
 const TransacaoRepositoryDatabase = require('./infra/repositories/TransacaoRepositoryDatabase');
 const Pg = require('./infra/databases/Pg');
-const app = express();
-const port = 3000;
+// const app = express();
+const port = process.env.NODE_PORT ?? 3000;
+const fastify = require('fastify')({ logger: false })
 
-app.use(express.json());
+// app.use(express.json());
 
 const connection = new Pg();
 
-app.post('/clientes/:id/transacoes', async (req, res) => {
+fastify.post('/clientes/:id/transacoes', async (req, res) => {
 	const { valor, tipo, descricao } = req.body;
 	const clienteId = req.params.id;
 	const conexao = await connection.connect();
@@ -24,7 +25,7 @@ app.post('/clientes/:id/transacoes', async (req, res) => {
 
 		if (!clienteDb) {
 			await conexao.query('ROLLBACK');
-			return res.status(404).send({ message: 'Cliente não encontrado!' });
+			return res.code(404).send({ message: 'Cliente não encontrado!' });
 		}
 
 		const transacao = new Transacao(valor, tipo, descricao);
@@ -33,7 +34,7 @@ app.post('/clientes/:id/transacoes', async (req, res) => {
 		
 		if (tipo === 'd' && (cliente.getSaldo() - valor) < -cliente.getLimite()) {
 			await conexao.query('ROLLBACK');
-			return res.status(422).json({ message: 'Limite não disponível!' });
+			return res.code(422).send({ message: 'Limite não disponível!' });
 		}
 
 		cliente.setSaldo(cliente.getSaldo() + (tipo === 'd' ? -valor : valor));
@@ -47,19 +48,19 @@ app.post('/clientes/:id/transacoes', async (req, res) => {
 
 		await conexao.query('COMMIT');
 	
-		res.status(200).send({
+		res.code(200).send({
 			limite: cliente?.getLimite() || 0,
 			saldo: cliente?.getSaldo() || 0
 		});
 	} catch (error) {
 		await conexao.query('ROLLBACK');
-		res.status(422).json({ message: error.message});
+		res.code(422).send({ message: error.message});
 	} finally {
 		conexao.release();
 	}
 });
 
-app.get('/clientes/:id/extrato', async (req, res) => {
+fastify.get('/clientes/:id/extrato', async (req, res) => {
 	const clienteId = req.params.id;
 	const conexao = await connection.connect();
 	try {
@@ -68,12 +69,12 @@ app.get('/clientes/:id/extrato', async (req, res) => {
 		const cliente = await clienteRepository.findById(clienteId, false);
 
 		if (!cliente) {
-			return res.status(404).send({ message: 'Cliente não encontrado!'});
+			return res.code(404).send({ message: 'Cliente não encontrado!'});
 		}
 
 		const extrato = await clienteRepository.extrato(clienteId);
 	
-		res.status(200).send({
+		res.code(200).send({
 			saldo: {
 				total: cliente?.saldo || 0,
 				limite: cliente?.limite || 0,
@@ -82,14 +83,17 @@ app.get('/clientes/:id/extrato', async (req, res) => {
 			ultimas_transacoes: extrato ?? []
 		});
 	} catch (error) {
-		res.status(422).json({ message: error.message});
+		res.code(422).send({ message: error.message});
 	} finally {
 		conexao.release();
 	}
 });
 
-app.listen(port, () => {
+fastify.listen({ port }, (err) => {
+	if (err) {
+		console.error(err)
+	}
   console.log(`Server is listening on port ${port}`);
 });
 
-module.exports = app;
+module.exports = fastify;
