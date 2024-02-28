@@ -5,7 +5,7 @@ const ClienteRepositoryDatabase = require('./infra/repositories/ClienteRepositor
 const TransacaoRepositoryDatabase = require('./infra/repositories/TransacaoRepositoryDatabase');
 const Pg = require('./infra/databases/Pg');
 const app = express();
-const port = 3000;
+const port = process.env.NODE_PORT ?? 3000;
 
 app.use(express.json());
 

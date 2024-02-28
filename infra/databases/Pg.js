@@ -6,7 +6,7 @@ class Pg {
 	constructor () {
 		this.connection = new Pool({
 			user: 'postgres',
-			host: 'db',
+			host: 'localhost',
 			database: 'rinhadb',
 			password: 'postgres',
 			port: 5432,
