@@ -15,3 +15,5 @@ Submissão feita com:
 - [repositório da api](https://github.com/zanfranceschi/rinha-de-backend-2024-q1-poc)
 
 [@dipedro1](https://twitter.com/dipedro1) @ twitter
+
+[Matheus Gomes](https://www.linkedin.com/in/matheus-gomes-de-almeida96/) Linkedin
