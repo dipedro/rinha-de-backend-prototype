@@ -1,5 +1,4 @@
 FROM node:lts-alpine 
-# TODO create Predro's api image on dockerhub
 
 WORKDIR /app
 
