@@ -1,9 +1,7 @@
 version: "3.5"
 services:
   api1: # API - Instância 01
-    build: 
-      context: .
-      dockerfile: Dockerfile  # TODO: uses Pedro's api image
+    image: matheusgomesa/dipedro-rinha-de-backend-2024-q1:1.0
     network_mode: host
     hostname: api1
     volumes:
@@ -22,9 +20,7 @@ services:
           memory: "150MB"
 
   api2: # API - Instância 02
-    build: 
-      context: .
-      dockerfile: Dockerfile  # TODO: uses Pedro's api image  
+    image: matheusgomesa/dipedro-rinha-de-backend-2024-q1:1.0
     hostname: api2
     network_mode: host
     volumes:
