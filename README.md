@@ -7,7 +7,7 @@
 <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg" alt="logo postgres" width="200" height="auto">
 
 
-## Pedro Azevedo
+## Pedro Azevedo e Matheus Gomes
 Submissão feita com:
 - `nginx` como load balancer
 - `postgres` como banco de dados
@@ -15,5 +15,6 @@ Submissão feita com:
 - [repositório da api](https://github.com/zanfranceschi/rinha-de-backend-2024-q1-poc)
 
 [@dipedro1](https://twitter.com/dipedro1) @ twitter
+[Pedro Azevedo](https://www.linkedin.com/in/dipedro/) Linkedin
 
 [Matheus Gomes](https://www.linkedin.com/in/matheus-gomes-de-almeida96/) Linkedin
